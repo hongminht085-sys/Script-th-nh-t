@@ -1,5 +1,5 @@
 -- ============================================================================
--- THÀNH ĐẠT V1.2 - MASTERPIECE EDITION (DELTA X EXCLUSIVE)
+-- THÀNH ĐẠT V1.5 - ULTIMATE MASTERPIECE & AUTO AIM KILL (DELTA X)
 -- ============================================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -47,9 +47,9 @@ TitleText.BackgroundTransparency = 1
 TitleText.Position = UDim2.new(0, 15, 0, 0)
 TitleText.Size = UDim2.new(1, -30, 1, 0)
 TitleText.Font = Enum.Font.GothamBold
-TitleText.Text = "💎 THÀNH ĐẠT V1.2 - MASTERPIECE 💎"
+TitleText.Text = "💎 THÀNH ĐẠT V1.5 - ULTIMATE MASTERPIECE 💎"
 TitleText.TextColor3 = Color3.fromRGB(0, 255, 180)
-TitleText.TextSize = 13
+TitleText.TextSize = 12
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 
 -- Nút thu nhỏ/mở menu nhanh
@@ -79,7 +79,7 @@ Container.Parent = MainFrame
 Container.BackgroundTransparency = 1
 Container.Position = UDim2.new(0, 12, 0, 55)
 Container.Size = UDim2.new(1, -24, 1, -65)
-Container.CanvasSize = UDim2.new(0, 0, 4.8, 0)
+Container.CanvasSize = UDim2.new(0, 0, 5.5, 0)
 Container.ScrollBarThickness = 4
 
 local UIListLayout = Instance.new("UIListLayout")
@@ -101,7 +101,53 @@ local function createToggleBtn(parent, text)
 end
 
 --------------------------------------------------------------------------------
--- 1. CHỨC NĂNG XUYÊN TƯỜNG (NOCLIP)
+-- 1. CHỨC NĂNG CHẠY NHANH (KHÓA CỨNG WALKBCK CHỐNG RESET)
+--------------------------------------------------------------------------------
+local SpeedSection = Instance.new("Frame", Container)
+SpeedSection.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+SpeedSection.Size = UDim2.new(1, 0, 0, 75)
+Instance.new("UICorner", SpeedSection).CornerRadius = UDim.new(0, 8)
+
+local SText = Instance.new("TextLabel", SpeedSection)
+SText.BackgroundTransparency = 1
+SText.Position = UDim2.new(0, 10, 0, 6)
+SText.Size = UDim2.new(1, -20, 0, 20)
+SText.Font = Enum.Font.GothamBold
+SText.Text = "🏃 Tốc độ chạy (Khóa cứng chống reset)"
+SText.TextColor3 = Color3.fromRGB(255, 255, 255)
+SText.TextSize = 12
+SText.TextXAlignment = Enum.TextXAlignment.Left
+
+local SpeedBox = Instance.new("TextBox", SpeedSection)
+SpeedBox.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+SpeedBox.Position = UDim2.new(0, 10, 0, 32)
+SpeedBox.Size = UDim2.new(1, -20, 0, 32)
+SpeedBox.Font = Enum.Font.Gotham
+SpeedBox.Text = "16"
+SpeedBox.TextColor3 = Color3.fromRGB(0, 255, 180)
+SpeedBox.TextSize = 12
+Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+local customSpeed = 16
+SpeedBox.FocusLost:Connect(function()
+    local val = tonumber(SpeedBox.Text)
+    if val and val > 0 then customSpeed = val else SpeedBox.Text = tostring(customSpeed) end
+end)
+
+RunService.RenderStepped:Connect(function()
+    pcall(function()
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum and hum.WalkSpeed ~= customSpeed then
+                hum.WalkSpeed = customSpeed
+            end
+        end
+    end)
+end)
+
+--------------------------------------------------------------------------------
+-- 2. CHỨC NĂNG XUYÊN TƯỜNG (NOCLIP)
 --------------------------------------------------------------------------------
 local NoclipSection = Instance.new("Frame", Container)
 NoclipSection.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
@@ -133,7 +179,7 @@ RunService.Stepped:Connect(function()
 end)
 
 --------------------------------------------------------------------------------
--- 2. CHỨC NĂNG NHẢY VÔ TẬN (INFINITE JUMP)
+-- 3. CHỨC NĂNG NHẢY VÔ TẬN (INFINITE JUMP)
 --------------------------------------------------------------------------------
 local InfJumpSection = Instance.new("Frame", Container)
 InfJumpSection.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
@@ -163,54 +209,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 --------------------------------------------------------------------------------
--- 3. CHỨC NĂNG XOAY NGƯỜI (SPINBOT)
---------------------------------------------------------------------------------
-local SpinSection = Instance.new("Frame", Container)
-SpinSection.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-SpinSection.Size = UDim2.new(1, 0, 0, 95)
-Instance.new("UICorner", SpinSection).CornerRadius = UDim.new(0, 8)
-
-local spinActive = false
-local SpinBtn = createToggleBtn(SpinSection, "🌀 Xoay Người (Spinbot)")
-SpinBtn.Position = UDim2.new(0, 10, 0, 8)
-SpinBtn.Size = UDim2.new(1, -20, 0, 35)
-
-SpinBtn.MouseButton1Click:Connect(function()
-    spinActive = not spinActive
-    SpinBtn.BackgroundColor3 = spinActive and Color3.fromRGB(0, 180, 90) or Color3.fromRGB(180, 40, 40)
-    SpinBtn.Text = spinActive and "🌀 Xoay Người: BẬT" or "🌀 Xoay Người: TẮT"
-end)
-
-local SpinBox = Instance.new("TextBox", SpinSection)
-SpinBox.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
-SpinBox.Position = UDim2.new(0, 10, 0, 52)
-SpinBox.Size = UDim2.new(1, -20, 0, 32)
-SpinBox.Font = Enum.Font.Gotham
-SpinBox.Text = "Tốc độ xoay: 50"
-SpinBox.TextColor3 = Color3.fromRGB(0, 255, 180)
-SpinBox.TextSize = 11
-Instance.new("UICorner", SpinBox).CornerRadius = UDim.new(0, 6)
-
-local spinSpeed = 50
-SpinBox.FocusLost:Connect(function()
-    local val = tonumber(SpinBox.Text:match("%d+"))
-    if val then spinSpeed = val SpinBox.Text = "Tốc độ xoay: " .. val else SpinBox.Text = "Tốc độ xoay: " .. spinSpeed end
-end)
-
-RunService.RenderStepped:Connect(function()
-    if spinActive then
-        pcall(function()
-            local char = LocalPlayer.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            if root then
-                root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
-            end
-        end)
-    end
-end)
-
---------------------------------------------------------------------------------
--- 4. AIMBOT VÒNG TRÒN FOV (TỐI ƯU HÓA AN TOÀN TUYỆT ĐỐI)
+-- 4. AIMBOT VÒNG TRÒN FOV
 --------------------------------------------------------------------------------
 local AimbotSection = Instance.new("Frame", Container)
 AimbotSection.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
@@ -218,7 +217,9 @@ AimbotSection.Size = UDim2.new(1, 0, 0, 110)
 Instance.new("UICorner", AimbotSection).CornerRadius = UDim.new(0, 8)
 
 local aimbotActive = false
-local AimbotBtn = createToggleBtn(AimbotSection, "🎯 Aimbot FOV + Nhịp Bắn", UDim2.new(0, 10, 0, 8), UDim2.new(1, -20, 0, 32))
+local AimbotBtn = createToggleBtn(AimbotSection, "🎯 Aimbot FOV + Nhịp Bắn")
+AimbotBtn.Position = UDim2.new(0, 10, 0, 8)
+AimbotBtn.Size = UDim2.new(1, -20, 0, 32)
 
 AimbotBtn.MouseButton1Click:Connect(function()
     aimbotActive = not aimbotActive
@@ -279,17 +280,6 @@ if LocalPlayer.Character then
         if child:IsA("Tool") then hookWeapon(LocalPlayer.Character) end
     end)
 end
-
-UserInputService.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isShooting = true
-    end
-end)
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isShooting = false
-    end
-end)
 
 RunService.RenderStepped:Connect(function()
     pcall(function()
@@ -406,7 +396,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 --------------------------------------------------------------------------------
--- 6. AIM KILL PVP LƠ LỶNG & XOAY VÒNG SERVER
+-- 6. AIM KILL PVP (TỰ ĐỘNG BÁM LƠ LỶNG + TỰ ĐỘNG BÓP CÒ XẢ ĐẠN 100%)
 --------------------------------------------------------------------------------
 local PVPSection = Instance.new("Frame", Container)
 PVPSection.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
@@ -414,19 +404,19 @@ PVPSection.Size = UDim2.new(1, 0, 0, 50)
 Instance.new("UICorner", PVPSection).CornerRadius = UDim.new(0, 8)
 
 local pvpAutoActive = false
-local PVPBtn = createToggleBtn(PVPSection, "⚡ Auto Aim Kill (Săn PVP Server)")
+local PVPBtn = createToggleBtn(PVPSection, "⚡ Auto Aim Kill + Auto Shoot")
 PVPBtn.Position = UDim2.new(0, 10, 0, 6)
 PVPBtn.Size = UDim2.new(1, -20, 0, 38)
 
 PVPBtn.MouseButton1Click:Connect(function()
     pvpAutoActive = not pvpAutoActive
     PVPBtn.BackgroundColor3 = pvpAutoActive and Color3.fromRGB(0, 180, 90) or Color3.fromRGB(180, 40, 40)
-    PVPBtn.Text = pvpAutoActive and "⚡ Auto Aim Kill: BẬT" or "⚡ Auto Aim Kill: TẮT"
+    PVPBtn.Text = pvpAutoActive and "⚡ Auto Aim + Shoot: BẬT" or "⚡ Auto Aim + Shoot: TẮT"
 end)
 
 task.spawn(function()
     while true do
-        task.wait(0.3)
+        task.wait(0.1)
         if pvpAutoActive then
             pcall(function()
                 for _, target in ipairs(Players:GetPlayers()) do
@@ -438,29 +428,54 @@ task.spawn(function()
                         if tHum.Health > 0 then
                             local startTime = tick()
                             while tHum.Health > 0 and pvpAutoActive and target.Parent and (tick() - startTime < 6) do
-                                task.wait(0.04)
+                                task.wait(0.03)
                                 pcall(function()
                                     local Cam = workspace.CurrentCamera
                                     local myChar = LocalPlayer.Character
+                                    local myHum = myChar and myChar:FindFirstChildOfClass("Humanoid")
                                     local myRoot = myChar and myChar:FindFirstChild("HumanoidRootPart")
-                                    if myRoot and tRoot then
-                                        myRoot.CFrame = tRoot.CFrame * CFrame.new(0, 6, 0)
+                                    
+                                    if myRoot and tRoot and myHum then
+                                        -- Khóa trạng thái treo, vô hiệu hóa trọng lực
+                                        myHum.PlatformStand = true
                                         myRoot.Velocity = Vector3.new(0, 0, 0)
+                                        myRoot.CFrame = tRoot.CFrame * CFrame.new(0, 6, 0)
                                         
+                                        -- Ghim thẳng camera vào đầu mục tiêu
                                         if Cam and target.Character:FindFirstChild("Head") then
                                             Cam.CFrame = CFrame.new(Cam.CFrame.Position, target.Character.Head.Position)
                                         end
                                         
+                                        -- Tự động kích hoạt súng liên tục (Bóp cò tự động)
                                         local tool = myChar and myChar:FindFirstChildOfClass("Tool")
                                         if tool then
-                                            pcall(function() tool:Activate() end)
+                                            pcall(function()
+                                                tool:Activate()
+                                                if tool:FindFirstChild("RemoteEvent") then
+                                                    tool.RemoteEvent:FireServer()
+                                                elseif tool:FindFirstChild("Handle") and tool.Handle:FindFirstChild("Fire") then
+                                                    tool.Handle.Fire:FireServer()
+                                                end
+                                            end)
                                         end
                                     end
                                 end)
                             end
+                            -- Trả lại trạng thái bình thường khi hạ xong 1 người
+                            pcall(function()
+                                local myChar = LocalPlayer.Character
+                                local myHum = myChar and myChar:FindFirstChildOfClass("Humanoid")
+                                if myHum then myHum.PlatformStand = false end
+                            end)
                         end
                     end
                 end
+            end)
+        else
+            pcall(function()
+                local myChar = LocalPlayer.Character
+                local myHum = myChar and myChar:FindFirstChildOfClass("Humanoid")
+                if myHum then myHum.PlatformStand = false end
             end)
         end
     end
@@ -540,4 +555,4 @@ end
 refreshTeleList()
 RefreshTeleBtn.MouseButton1Click:Connect(refreshTeleList)
 
-print("💎 Thành Đạt V1.2 (Masterpiece Edition) đã sẵn sàng hoạt động hoàn hảo 100%!")
+print("💎 Thành Đạt V1.5 - Ultimate Masterpiece đã hoạt động mượt mà hoàn hảo!")
